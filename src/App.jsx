@@ -73,7 +73,7 @@ function App() {
     ? true
     : album.date?.toString().includes(dateQuery);
 
-  return albumMatch && artistMatch && dateMatch;
+    return albumMatch && artistMatch && dateMatch;
   });
 
   return (
@@ -82,9 +82,16 @@ function App() {
         <h1>Album Ranking</h1>
         <div className='search'>
           <h3>Search by: </h3>
-          <input type="text" placeholder='album' value={albumQuery} onChange={(e) => setAlbumQuery(e.target.value)}/>
-          <input type="text" placeholder='artist' value={artistQuery} onChange={(e) => setArtistQuery(e.target.value)}/>
-          <button className='yearButton' onClick={() => {dateQuery === "2026" ? setDateQuery("") : setDateQuery("2026")}}>2026 Ranking</button>  
+          <input type="text" placeholder='album' value={albumQuery} onChange={(e) => setAlbumQuery(e.target.value)} />
+          <input type="text" placeholder='artist' value={artistQuery} onChange={(e) => setArtistQuery(e.target.value)} />
+          <button
+            className="yearButton"
+            onClick={() =>
+              setDateQuery(prev => prev === "2026" ? "" : "2026")
+            }
+          >
+            2026 Ranking
+          </button>
         </div>
       </div>
       <div className="content">
