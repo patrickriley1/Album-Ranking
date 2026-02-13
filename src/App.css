@@ -7,6 +7,115 @@
   color: var(--secondary-color);
 }
 
+.header h3 {
+  font-size: 1.5em;
+  color: var(--secondary-color);
+}
+
+.header input {
+  padding: 8px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 4px;
+}
+
+.search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.search input {
+  background-color: transparent;
+  color: var(--secondary-color);
+}
+
+.yearButton {
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.yearButton.active {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  cursor: not-allowed;
+}
+
+.yearButton:hover {
+  transform: scale(1.05);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.album {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border: 2px solid var(--secondary-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.albumRank {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: black;
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+
+.album:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.albumCover {
+  width: 150px;
+  height: 150px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.albumTitle {
+  margin-top: 8px;
+  font-size: 1.2em;
+  color: var(--secondary-color);
+}
+
+.albumArtist {
+  font-size: 1em;
+  color: var(--secondary-color);
+}
+
+.albumRating {
+  font-size: 0.9em;
+  color: var(--secondary-color);
+}
+
+.albumVinyl,
+.albumCD {
+  font-size: 0.8em;
+  color: var(--secondary-color);
+}
+
+.empty {
+  text-align: center;
+  color: var(--secondary-color);
+}
+
 .footer {
   display: flex;
   flex-direction: column;

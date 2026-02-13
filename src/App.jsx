@@ -1,55 +1,107 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import matter from 'gray-matter'
 
 function App() {
   const [albums, setAlbums] = useState([])
 
-  useEffect(() => {
-    //this is how I'm importing the md files
-    const files = import.meta.glob('./Music Library/*.md', {as : 'raw'})
+  const [albumQuery, setAlbumQuery] = useState("");
+  const [artistQuery, setArtistQuery] = useState("");
+  const [dateQuery, setDateQuery] = useState("");
 
-    //define a function to load the albums from the md files
+
+  const parseFrontmatter = (content) => {
+  const match = content.match(/---([\s\S]*?)---/);
+  if (!match) return {};
+
+  const lines = match[1].split("\n");
+  const data = {};
+
+  lines.forEach(line => {
+    const [key, ...rest] = line.split(":");
+    if (!key || rest.length === 0) return;
+
+    let value = rest.join(":").trim();
+
+    if (value === "true") value = true;
+    else if (value === "false") value = false;
+    else if (!isNaN(value)) value = Number(value);
+    else value = value.replace(/^"|"$/g, "");
+
+    data[key.trim()] = value;
+  });
+
+  return data;
+  };
+
+
+  useEffect(() => {
+    const files = import.meta.glob('./Music Library/*.md', {
+      query: '?raw',
+      import: 'default'
+    });
+
     const loadAlbums = async () => {
       const loadedAlbums = [];
 
       for (const path in files) {
         const content = await files[path]();
-        const { data } = matter(content);
-
+        const data = parseFrontmatter(content);
         loadedAlbums.push(data);
       }
 
-      //sort albums by rating
-      loadedAlbums.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+      loadedAlbums.sort((a, b) => b.rating - a.rating);
       setAlbums(loadedAlbums);
-    }
-    
-    //call this function
-    loadAlbums();
+      console.log(loadedAlbums);
+    };
 
-    //remember empty dependency array so it runs once intially
-  }, [])
+    console.log(Object.keys(files));
+
+    loadAlbums();
+  }, []);
+
+  const filteredAlbums = albums.filter((album) => {
+  const albumMatch = album.album
+    ?.toLowerCase()
+    .includes(albumQuery.toLowerCase());
+
+  const artistMatch = album.artist
+    ?.toLowerCase()
+    .includes(artistQuery.toLowerCase());
+
+  const dateMatch =
+  dateQuery === ""
+    ? true
+    : album.date?.toString().includes(dateQuery);
+
+  return albumMatch && artistMatch && dateMatch;
+  });
 
   return (
     <div>
       <div className="header">
         <h1>Album Ranking</h1>
+        <div className='search'>
+          <h3>Search by: </h3>
+          <input type="text" placeholder='album' value={albumQuery} onChange={(e) => setAlbumQuery(e.target.value)}/>
+          <input type="text" placeholder='artist' value={artistQuery} onChange={(e) => setArtistQuery(e.target.value)}/>
+          <button className='yearButton' onClick={() => {dateQuery === "2026" ? setDateQuery("") : setDateQuery("2026")}}>2026 Ranking</button>  
+        </div>
       </div>
       <div className="content">
-        {albums.map((album, index) => (
+        {filteredAlbums.map((album, index) => (
           <div key={index} className="album">
-            <img src={album.cover} alt={album.title} />
-            <h2>{album.title}</h2>
-            <h4>{album.artist}</h4>
-            <p>{album.rating}</p>
-            {album.Vinyl ? <p>Vinyl: ✔</p> : <p>Vinyl: ✖</p>}
-            {album.CD ? <p>CD: ✔</p> : <p>CD: ✖</p>}
+            <div className="albumRank">#{index + 1}</div>
+            <img src={album.cover} alt={album.album} className='albumCover' />
+            <h2 className='albumTitle'>{album.album}</h2>
+            <h4 className='albumArtist'>{album.artist}</h4>
+            <p className='albumRating'>{album.rating}</p>
+            {album.Vinyl ? <p className='albumVinyl'>Vinyl: ✔</p> : <p className='albumVinyl'>Vinyl: ✖</p>}
+            {album.CD ? <p className='albumCD'>CD: ✔</p> : <p className='albumCD'>CD: ✖</p>}
           </div>
         ))}
+        {filteredAlbums.length === 0 && <p className='empty'>No albums found.</p>}
       </div>
       <div className="footer">
-        <p>I created this view by importing markdown files from my obsidian vault.</p>
       </div>
     </div>
   )
